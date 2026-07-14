@@ -11,13 +11,6 @@ EXIT_SLIPPAGE_PCT = 0.05
 EXIT_TRANSACTION_COST_PCT = 0.02
 
 
-
-def fmt(value: Any, decimals: int = 6) -> str:
-    if value is None:
-        return "N/A"
-    return f"{float(value):.{decimals}f}"
-
-
 def is_price_fresh(event_time: datetime) -> bool:
     """Return True when the latest market price is recent enough."""
     if event_time.tzinfo is None:
@@ -126,11 +119,20 @@ def main() -> None:
                 """
             )
 
+            cursor.execute(
+                """
+                DELETE FROM closed_paper_trades a
+                USING closed_paper_trades b
+                WHERE a.position_id = b.position_id
+                  AND a.trade_id > b.trade_id;
+                """
+            )
 
             cursor.execute(
                 """
-                ALTER TABLE paper_positions
-                ADD COLUMN IF NOT EXISTS quantity DOUBLE PRECISION;
+                CREATE UNIQUE INDEX IF NOT EXISTS
+                uq_closed_paper_trades_position_id
+                ON closed_paper_trades (position_id);
                 """
             )
 
@@ -366,9 +368,9 @@ def main() -> None:
                     f"{row[1]} | "
                     f"strategy={row[2]} | "
                     f"regime={row[3]} | "
-                    f"entry={fmt(row[4])} | "
-                    f"stop={fmt(row[5])} | "
-                    f"target={fmt(row[6])} | "
+                    f"entry={row[4]:.6f} | "
+                    f"stop={row[5]:.6f} | "
+                    f"target={row[6]:.6f} | "
                     f"status={row[7]}"
                 )
 

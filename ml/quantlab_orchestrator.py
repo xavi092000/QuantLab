@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import argparse
 import subprocess
 import sys
 import time
@@ -6,6 +9,7 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+TARGET_CYCLE_SECONDS = 60.0
 
 PIPELINE_STEPS = [
     "ml.quant_metrics_engine",
@@ -29,7 +33,6 @@ PIPELINE_STEPS = [
 
 
 def run_step(module_name: str) -> None:
-    """Run one pipeline stage as a Python module from the project root."""
     print()
     print("=" * 50)
     print(f"[{datetime.now()}]")
@@ -51,7 +54,6 @@ def run_step(module_name: str) -> None:
         if result.stderr:
             print("ERRORS:")
             print(result.stderr, end="" if result.stderr.endswith("\n") else "\n")
-
         raise RuntimeError(
             f"Pipeline stopped because {module_name} failed "
             f"with exit code {result.returncode}."
@@ -64,40 +66,55 @@ def run_step(module_name: str) -> None:
     print(f"SUCCESS: {module_name}")
 
 
-def run_cycle() -> None:
-    """Execute one complete QuantLab pipeline cycle."""
-    cycle_started_at = datetime.now()
+def run_cycle() -> float:
+    cycle_started = time.perf_counter()
 
     print()
     print("=" * 50)
-    print(f"CYCLE START: {cycle_started_at}")
+    print(f"CYCLE START: {datetime.now()}")
     print("=" * 50)
 
     for step in PIPELINE_STEPS:
         run_step(step)
 
-    elapsed = (datetime.now() - cycle_started_at).total_seconds()
+    elapsed = time.perf_counter() - cycle_started
 
     print()
     print("=" * 50)
     print(f"CYCLE COMPLETE in {elapsed:.2f} seconds")
     print("=" * 50)
 
+    return elapsed
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run the QuantLab autonomous pipeline."
+    )
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Run exactly one complete pipeline cycle, then exit.",
+    )
+    return parser.parse_args()
+
 
 def main() -> None:
-    """Run the QuantLab pipeline continuously every 60 seconds."""
+    args = parse_args()
+
     print()
     print("====================================")
     print("QUANTLAB AUTONOMOUS PIPELINE")
     print("====================================")
 
     try:
-        while True:
-            cycle_started_at = time.monotonic()
+        if args.once:
             run_cycle()
+            return
 
-            elapsed = time.monotonic() - cycle_started_at
-            sleep_seconds = max(0.0, 60.0 - elapsed)
+        while True:
+            elapsed = run_cycle()
+            sleep_seconds = max(0.0, TARGET_CYCLE_SECONDS - elapsed)
 
             print()
             print("------------------------------------")

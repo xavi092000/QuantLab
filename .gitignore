@@ -25,3 +25,5 @@ tools/manual_review/
 tools/review_queue.txt
 tools/review_completed.txt
 tools/review_report.md
+
+docs/demo/quantlab-demo.mp4

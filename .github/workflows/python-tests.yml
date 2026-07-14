@@ -1,0 +1,38 @@
+name: Python tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Compile critical modules
+        run: |
+          python -m py_compile ml/adaptive_strategy_engine.py
+          python -m py_compile ml/live_return_signal_engine.py
+          python -m py_compile ml/final_strategy_decision_engine.py
+          python -m py_compile ml/position_monitor_engine.py
+          python -m py_compile ml/quantlab_orchestrator.py
+
+      - name: Run unit tests
+        run: pytest -m "not integration"

@@ -351,8 +351,8 @@ def main() -> None:
             print("==============================")
             print("TRADE EXECUTION ENGINE V3")
             print("==============================")
-            print("Trade plans found:", len(trade_plans))
-            print("Positions opened:", opened)
+            print("Eligible trade plans this cycle:", len(trade_plans))
+            print("New positions opened:", opened)
             print("Skipped - existing:", skipped_existing)
             print("Skipped - missing price:", skipped_missing_price)
             print("Skipped - stale price:", skipped_stale_price)
@@ -387,7 +387,10 @@ def main() -> None:
                 """
             )
 
-            for row in cursor.fetchall():
+            open_positions = cursor.fetchall()
+            print("Currently open positions:", len(open_positions))
+
+            for row in open_positions:
                 print(
                     f"id={row[0]} | "
                     f"{row[1]} | "

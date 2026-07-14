@@ -12,15 +12,6 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
 
-## Live Demonstration
-
-[▶ Watch the QuantLab live platform demonstration](docs/demo/quantlab-demo.mp4)
-
-The demonstration shows live market ingestion, AI decisions, the complete
-17-stage execution pipeline, research analytics, paper-trading monitoring,
-and system-health metrics.
-
----
 
 ## Dashboard Preview
 
@@ -109,6 +100,20 @@ Operational monitoring for inference latency, benchmark verification, data fresh
 -   FastAPI REST API
 -   Streamlit dashboard
 -   Docker-ready deployment
+
+## Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Language | Python 3.11 |
+| API | FastAPI |
+| Database | PostgreSQL |
+| Dashboard | Streamlit, Plotly |
+| Machine Learning | scikit-learn |
+| Data Processing | Pandas, NumPy |
+| DevOps | Docker, GitHub Actions |
+
+---
 
 ## Architecture
 
@@ -1029,44 +1034,6 @@ GET /dashboard
 ```
 
 ------------------------------------------------------------------------
-
-## Screenshots
-
-### Executive Overview
-
-![Executive Overview](docs/screenshots/executive-overview.png)
-
----
-
-### Live AI Decisions
-
-![Live AI Decisions](docs/screenshots/live-decisions.png)
-
----
-
-### Live Pipeline Execution
-
-![Pipeline Execution](docs/screenshots/live-pipeline-execution.png)
-
----
-
-### Paper Trading Performance
-
-![Performance Dashboard](docs/screenshots/performance.png)
-
----
-
-### Historical Research & Validation
-
-![Historical Research](docs/screenshots/historical-research-evaluation.png)
-
----
-
-### System Health
-
-![System Health](docs/screenshots/system-health.png)
-
-
 
 ## Current Limitations
 
